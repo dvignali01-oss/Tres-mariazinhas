@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakery Shop</title>
+    <style>
+        /* Styles for bakery shop */
+        body { font-family: Arial, sans-serif; }
+        header { text-align: center; padding: 20px; }
+        #products, #cart { margin: 20px; }
+        .product { border: 1px solid #ccc; padding: 10px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our Bakery</h1>
+    </header>
+    <main>
+        <section id="products">
+            <h2>Our Products</h2>
+            <div class="product" data-price="5.00">
+                <h3>Chocolate Cake</h3>
+                <p>Delicious chocolate cake</p>
+                <button onclick="addToCart('Chocolate Cake', 5.00)">Add to Cart</button>
+            </div>
+            <div class="product" data-price="3.00">
+                <h3>Blueberry Muffin</h3>
+                <p>Fresh blueberry muffin</p>
+                <button onclick="addToCart('Blueberry Muffin', 3.00)">Add to Cart</button>
+            </div>
+            <div class="product" data-price="4.00">
+                <h3>Croissant</h3>
+                <p>Buttery croissant</p>
+                <button onclick="addToCart('Croissant', 4.00)">Add to Cart</button>
+            </div>
+            <!-- Add more products as needed -->
+        </section>
+        <section id="cart">
+            <h2>Your Cart</h2>
+            <ul id="cart-items"></ul>
+            <p id="total-price">Total: $0.00</p>
+            <button onclick="contactWhatsApp()">Order via WhatsApp</button>
+        </section>
+    </main>
+    <script>
+        let cart = [];
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCart();
+        }
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                cartItems.innerHTML += `<li>${item.name}: $${item.price.toFixed(2)}</li>`;
+                total += item.price;
+            });
+            document.getElementById('total-price').innerText = `Total: $${total.toFixed(2)}`;
+        }
+        function contactWhatsApp() {
+            const message = `I would like to order: ${cart.map(item => item.name).join(', ')}`;
+            const whatsappUrl = `https://wa.me/1234567890?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
