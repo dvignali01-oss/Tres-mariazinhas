@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Três Mariazinhas | Confeitaria Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Paleta Sofisticada: Azul e Rosa com toque metálico */
+            --blue-dark: #1A2B4C;
+            --blue-light: #F0F4F8;
+            --pink-blush: #E8B4B8;
+            --pink-light: #FDF6F7;
+            --metallic-rose: #C89F9C;
+            --text-dark: #2C3E50;
+            --white: #FFFFFF;
+            --shadow-soft: 0 8px 24px rgba(26, 43, 76, 0.06);
+            --radius-geom: 4px; /* Geometria mais limpa e moderna */
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--blue-light);
+            margin: 0;
+            padding-bottom: 90px;
+            color: var(--text-dark);
+        }
+
+        /* Cabeçalho */
+        header {
+            background: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(200, 159, 156, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--blue-dark);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header span {
+            font-size: 12px;
+            color: var(--metallic-rose);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* Navegação de Categorias */
+        .category-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 20px;
+            background: var(--white);
+            scrollbar-width: none;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .category-scroll::-webkit-scrollbar { display: none; }
+
+        .category-item {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            border-radius: var(--radius-geom);
+            border: 1px solid var(--metallic-rose);
+            background: var(--white);
+            color: var(--metallic-rose);
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-item.active {
+            background: var(--blue-dark);
+            border-color: var(--blue-dark);
+            color: var(--white);
+        }
+
+        /* Grid de Produtos */
+        .menu-container {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius-geom);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            transition: transform 0.2s;
+        }
+
+        .product-img {
+            width: 120px;
+            min-height: 100%;
+            background-color: var(--pink-light);
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--blue-dark);
+        }
+
+        .product-info p {
+            font-size: 12px;
+            color: #7F8C8D;
+            margin: 0 0 12px 0;
+            line-height: 1.4;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .product-price {
+            color: var(--metallic-rose);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .btn-add {
+            background: var(--pink-blush);
+            color: var(--white);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-geom);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .btn-add:hover { background: var(--metallic-rose); }
+
+        /* Barra do Carrinho Flutuante */
+        .cart-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, var(--blue-dark), #2c3e50);
+            width: calc(100% - 40px);
+            max-width: 400px;
+            padding: 18px 25px;
+            border-radius: var(--radius-geom);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            box-shadow: 0 10px 30px rgba(26, 43, 76, 0.3);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .cart-bar.active { transform: translateX(-50%) translateY(0); }
+        .cart-bar i { color: var(--pink-blush); margin-right: 10px; font-size: 18px; }
+
+        /* Modal Checkout Premium */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 43, 76, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 2000;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px 20px 0 0;
+            padding: 30px 25px;
+            box-sizing: border-box;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 18px; color: var(--blue-dark); }
+        .close-btn { background: none; border: none; font-size: 20px; color: #95a5a6; cursor: pointer; }
+
+        /* Controles de Quantidade no Carrinho */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--blue-light);
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--blue-light);
+            padding: 4px 8px;
+            border-radius: var(--radius-geom);
+        }
+
+        .qty-btn {
+            background: none;
+            border: none;
+            color: var(--blue-dark);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+
+        .form-group { margin-top: 20px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(200, 159, 156, 0.4);
+            border-radius: var(--radius-geom);
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--pink-light);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus { outline: none; border-color: var(--metallic-rose); }
+
+        .btn-checkout {
+            background: var(--blue-dark);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-geom);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Notificação Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--white);
+            color: var(--blue-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-soft);
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            border-left: 4px solid var(--pink-blush);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Três Mariazinhas</h1>
+    <span>Doces & Delícias</span>
+</header>
+
+<div class="category-scroll" id="category-filters">
+    <div class="category-item active" onclick="filterCategory('Todos', this)">Todos</div>
+    <div class="category-item" onclick="filterCategory('Bolo de Pote', this)">Bolos de Pote</div>
+    <div class="category-item" onclick="filterCategory('Copo da Felicidade', this)">Copos da Felicidade</div>
+    <div class="category-item" onclick="filterCategory('Marmitas', this)">Marmitas</div>
+    <div class="category-item" onclick="filterCategory('Brigadeiros', this)">Brigadeiros</div>
+</div>
+
+<div class="menu-container" id="product-list">
+    </div>
+
+<div class="cart-bar" id="cart-bar" onclick="openCheckout()">
+    <div style="font-weight: 500;"><i class="fas fa-shopping-bag"></i> <span id="cart-count">0</span> itens</div>
+    <div id="cart-total" style="font-weight: 600;">R$ 0,00</div>
+</div>
+
+<div class="modal-overlay" id="checkout-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Seu Pedido</h2>
+            <button class="close-btn" onclick="closeCheckout()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div id="cart-items-list" style="margin-bottom: 20px;">
+            </div>
+        
+        <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 18px; margin-bottom: 20px; color: var(--blue-dark);">
+            <span>Total:</span>
+            <span id="modal-total">R$ 0,00</span>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="cust-name" placeholder="Seu Nome Completo" required>
+            <input type="text" id="cust-address" placeholder="Endereço de Entrega (Rua, Nº, Bairro)" required>
+            <select id="payment-method">
+                <option value="" disabled selected>Forma de Pagamento...</option>
+                <option value="Pix">Pix (Chave via WhatsApp)</option>
+                <option value="Cartão de Crédito">Cartão de Crédito (Maquininha)</option>
+                <option value="Cartão de Débito">Cartão de Débito (Maquininha)</option>
+                <option value="Dinheiro">Dinheiro</option>
+            </select>
+        </div>
+
+        <button class="btn-checkout" onclick="sendWhatsApp()">
+            <i class="fab fa-whatsapp"></i> Enviar Pedido
+        </button>
+    </div>
+</div>
+
+<div class="toast" id="toast">Item adicionado ao carrinho!</div>
+
+<script>
+    // Banco de dados dos produtos com imagens (URLs de exemplo em alta qualidade)
+    const products = [
+        { id: 1, name: "Bolo de Pote Ninho com Nutella", category: "Bolo de Pote", price: 14.90, desc: "Massa fofinha de cacau com creme de ninho e nutella original.", img: "https://images.unsplash.com/photo-1559553156-2e97137af16f?auto=format&fit=crop&w=300&q=80" },
+        { id: 2, name: "Copo da Felicidade Morango", category: "Copo da Felicidade", price: 22.50, desc: "Camadas perfeitas de brownie, creme belga e morangos frescos.", img: "https://images.unsplash.com/photo-1563805042-7684c8a9e9ce?auto=format&fit=crop&w=300&q=80" },
+        { id: 3, name: "Marmita de Brigadeiro Tradicional", category: "Marmitas", price: 18.00, desc: "Aquela porção generosa do nosso melhor brigadeiro para comer de colher.", img: "https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=300&q=80" },
+        { id: 4, name: "Caixa 4 Brigadeiros Gourmet", category: "Brigadeiros", price: 16.00, desc: "Chocolate belga 50% cacau com confeitos premium.", img: "https://images.unsplash.com/photo-1614083556064-94bb943d2db7?auto=format&fit=crop&w=300&q=80" },
+        { id: 5, name: "Bolo de Pote Red Velvet", category: "Bolo de Pote", price: 15.90, desc: "Massa aveludada com recheio de cream cheese suave.", img: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?auto=format&fit=crop&w=300&q=80" }
+    ];
+
+    let cart = [];
+
+    // Renderiza produtos filtrados
+    function renderProducts(category = 'Todos') {
+        const container = document.getElementById('product-list');
+        const filtered = category === 'Todos' ? products : products.filter(p => p.category === category);
+        
+        container.innerHTML = filtered.map(p => `
+            <div class="product-card">
+                <img src="${p.img}" alt="${p.name}" class="product-img">
+                <div class="product-info">
+                    <div>
+                        <h3>${p.name}</h3>
+                        <p>${p.desc}</p>
+                    </div>
+                    <div class="price-row">
+                        <span class="product-price">R$ ${p.price.toFixed(2).replace('.', ',')}</span>
+                        <button class="btn-add" onclick="addToCart(${p.id})">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Filtro visual das categorias
+    function filterCategory(category, element) {
+        document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        renderProducts(category);
+    }
+
+    // Lógica do Carrinho
+    function addToCart(id) {
+        const product = products.find(p => p.id === id);
+        const existingItem = cart.find(item => item.id === id);
+
+        if (existingItem) {
+            existingItem.qty += 1;
+        } else {
+            cart.push({ ...product, qty: 1 });
+        }
+        
+        updateCartUI();
+        showToast();
+    }
+
+    function changeQty(id, delta) {
+        const itemIndex = cart.findIndex(item => item.id === id);
+        if (itemIndex > -1) {
+            cart[itemIndex].qty += delta;
+            if (cart[itemIndex].qty <= 0) {
+                cart.splice(itemIndex, 1);
+            }
+            updateCartUI();
+            renderCartItems(); // Atualiza a lista dentro do modal
+        }
+    }
+
+    function updateCartUI() {
+        const bar = document.getElementById('cart-bar');
+        const totalDisplay = document.getElementById('cart-total');
+        const countDisplay = document.getElementById('cart-count');
+        const modalTotal = document.getElementById('modal-total');
+        
+        if(cart.length > 0) {
+            bar.classList.add('active');
+            const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+            const count = cart.reduce((acc, curr) => acc + curr.qty, 0);
+            
+            totalDisplay.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            modalTotal.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            countDisplay.innerText = count;
+        } else {
+            bar.classList.remove('active');
+            closeCheckout();
+        }
+    }
+
+    // Modal
+    function openCheckout() {
+        document.getElementById('checkout-modal').style.display = 'flex';
+        renderCartItems();
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkout-modal').style.display = 'none';
+    }
+
+    function renderCartItems() {
+        const list = document.getElementById('cart-items-list');
+        if (cart.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#7F8C8D;'>Seu carrinho está vazio.</p>";
+            return;
+        }
+        
+        list.innerHTML = cart.map(i => `
+            <div class="cart-item">
+                <div style="flex:1;">
+                    <div style="font-weight: 500; font-size: 14px; color: var(--blue-dark);">${i.name}</div>
+                    <div style="font-size: 13px; color: var(--metallic-rose);">R$ ${(i.price * i.qty).toFixed(2).replace('.', ',')}</div>
+                </div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="changeQty(${i.id}, -1)"><i class="fas fa-minus"></i></button>
+                    <span style="font-size: 14px; font-weight: 500; min-width: 15px; text-align: center;">${i.qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${i.id}, 1)"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Envio para WhatsApp
+    function sendWhatsApp() {
+        if(cart.length === 0) return;
+
+        const name = document.getElementById('cust-name').value;
+        const address = document.getElementById('cust-address').value;
+        const payment = document.getElementById('payment-method').value;
+        
+        if(!name || !address || !payment) {
+            alert("Por favor, preencha todos os campos de entrega e pagamento.");
+            return;
+        }
+
+        let message = `*NOVO PEDIDO | Três Mariazinhas* 🧁\n`;
+        message += `--------------------------------\n`;
+        message += `👤 *Cliente:* ${name}\n`;
+        message += `📍 *Entrega:* ${address}\n`;
+        message += `💳 *Pagamento:* ${payment}\n\n`;
+        message += `*RESUMO DO PEDIDO:*\n`;
+        
+        cart.forEach(item => {
+            message += `▪ ${item.qty}x ${item.name} (R$ ${(item.price * item.qty).toFixed(2)})\n`;
+        });
+
+        const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+        message += `--------------------------------\n`;
+        message += `💰 *TOTAL A PAGAR: R$ ${total.toFixed(2)}*\n\n`;
+        message += `Agradeço a preferência! Aguardo a confirmação.`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const phone = "5511915183761";
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    }
+
+    // Feedback visual (Toast)
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+    }
+
+    // Inicia a loja
+    renderProducts();
+</script>
+
+</body>
+</html>
